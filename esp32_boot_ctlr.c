@@ -12,7 +12,8 @@
 #define EN_BM PIN6_bm
 #define BOOT_BM PIN7_bm
 
-int reset_pushed();
+#define BUTTON_PRESSED ~PORTA.IN &RESET_BM
+
 void send_reset();
 
 int main(void)
@@ -67,17 +68,12 @@ int main(void)
 
         if (!boot_mode)
         {
-            if (reset_pushed())
+            if (BUTTON_PRESSED)
             {
                 send_reset();
             }
         }
     }
-}
-
-int reset_pushed()
-{
-    return ~PORTA.IN & RESET_BM;
 }
 
 void send_reset()
@@ -87,7 +83,7 @@ void send_reset()
     PORTA.DIR |= BOOT_BM;
     PORTA.OUT &= ~BOOT_BM;
 
-    while (reset_pushed())
+    while (BUTTON_PRESSED)
     {
         _delay_ms(100);
     }
