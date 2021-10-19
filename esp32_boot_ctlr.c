@@ -79,15 +79,38 @@ void send_reset()
     PORTA.DIR |= BOOT_BM;
     PORTA.OUT &= ~BOOT_BM;
 
+    uint8_t count = 0;
     while (BUTTON_PRESSED)
     {
         _delay_ms(100);
+        count++;
+
+        if ((count > 15) && (count % 2 == 0))
+        {
+            // make blink
+            PORTA.OUTTGL = BOOT_BM;
+        }
     }
     _delay_ms(100);
 
-    PORTA.OUT |= BOOT_BM;
-    PORTA.DIR &= ~BOOT_BM;
-    _delay_ms(10);
+    if (count > 15)
+    {
+        // long pressed
+        // set download mode
+        PORTA.OUT &= ~BOOT_BM;
+        _delay_ms(5);
+        PORTA.OUT |= EN_BM;
+        _delay_ms(10);
+        PORTA.OUT |= BOOT_BM;
+        PORTA.DIR &= ~BOOT_BM;
+    }
+    else
+    {
+        // short pressed
+        PORTA.OUT |= BOOT_BM;
+        PORTA.DIR &= ~BOOT_BM;
+        _delay_ms(10);
 
-    PORTA.OUT |= EN_BM;
+        PORTA.OUT |= EN_BM;
+    }
 }
