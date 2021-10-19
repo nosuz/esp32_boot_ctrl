@@ -58,20 +58,16 @@ int main(void)
                 PORTA.OUT = out_buf;
             }
         }
-        else
+        else if (boot_mode)
         {
             /* exit reset mode */
             boot_mode = false;
             PORTA.OUT = EN_BM | BOOT_BM;
             PORTA.DIR &= ~BOOT_BM;
         }
-
-        if (!boot_mode)
+        else if (BUTTON_PRESSED)
         {
-            if (BUTTON_PRESSED)
-            {
-                send_reset();
-            }
+            send_reset();
         }
     }
 }
