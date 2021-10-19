@@ -1,4 +1,4 @@
-#define F_CPU 2666666 /* 16 MHz / 6 */
+#define F_CPU 2666666UL /* 16 MHz / 6 */
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdbool.h>
