@@ -12,7 +12,7 @@
 #define EN_BM PIN6_bm
 #define BOOT_BM PIN7_bm
 
-#define BUTTON_PRESSED ~PORTA.IN &RESET_BM
+#define BUTTON_PRESSED (~PORTA.IN & RESET_BM)
 
 void send_reset();
 
