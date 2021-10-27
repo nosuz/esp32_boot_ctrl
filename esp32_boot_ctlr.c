@@ -3,6 +3,8 @@
 #include <util/delay.h>
 #include <stdbool.h>
 
+#define DOWNLOAD_MODE_BY_LONG_PRESS 0
+
 #define RESET_BM PIN1_bm
 #define RESETPIN_CTRL PORTA.PIN1CTRL
 
@@ -77,8 +79,10 @@ void send_reset()
     PORTA.OUT &= ~EN_BM;
     _delay_ms(10);
     PORTA.DIR |= BOOT_BM;
+    // LED ON
     PORTA.OUT &= ~BOOT_BM;
 
+#if DOWNLOAD_MODE_BY_LONG_PRESS == 1
     uint8_t count = 0;
     while (BUTTON_PRESSED)
     {
@@ -100,17 +104,31 @@ void send_reset()
         PORTA.OUT &= ~BOOT_BM;
         _delay_ms(5);
         PORTA.OUT |= EN_BM;
-        _delay_ms(10);
+        _delay_ms(5);
         PORTA.OUT |= BOOT_BM;
-        PORTA.DIR &= ~BOOT_BM;
+        PORTA.DIR &= ~BOOT_BM; // set BOOT input
     }
     else
     {
         // short pressed
         PORTA.OUT |= BOOT_BM;
         PORTA.DIR &= ~BOOT_BM;
-        _delay_ms(10);
+        _delay_ms(5);
 
         PORTA.OUT |= EN_BM;
     }
+#else
+    // wait release button
+    while (BUTTON_PRESSED)
+    {
+        _delay_ms(100);
+    }
+    _delay_ms(100);
+    // set BOOT to 1 and input.
+    PORTA.OUT |= BOOT_BM;
+    PORTA.DIR &= ~BOOT_BM;
+    _delay_ms(10);
+    // start ESP32
+    PORTA.OUT |= EN_BM;
+#endif
 }
